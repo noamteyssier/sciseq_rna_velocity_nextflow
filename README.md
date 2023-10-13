@@ -118,6 +118,12 @@ nextflow run -resume Processing.nf
 
 ## Results
 
+There will be a single anndata (`results/adata.h5ad`) that will be created
+that will contain the concatenated count matrices of all individual samples.
+
+Within that anndata there will be a column in `adata.obs` that reflects the sample
+names.
+
 All the results of the mapping will be in the `results/` directory that
 will be created.
 
