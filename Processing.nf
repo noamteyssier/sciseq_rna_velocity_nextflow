@@ -1,11 +1,12 @@
 #!/usr/bin/env nextflow
 
-include { Scispeak } from "./processes/scispeak.nf"
-include { KallistoBUS } from "./processes/kallisto_bus.nf"
+include { BuildH5AD } from "./processes/build_h5ad.nf"
 include { BUStoolsSort } from "./processes/bustools_sort.nf"
 include { BUStoolsInspect } from "./processes/bustools_inspect.nf"
 include { BUStoolsCountVelo } from "./processes/bustools_count.nf"
-include { BuildH5AD } from "./processes/build_h5ad.nf"
+include { KallistoBUS } from "./processes/kallisto_bus.nf"
+include { Merge } from "./processes/merge.nf"
+include { Scispeak } from "./processes/scispeak.nf"
 include { VeloStackH5AD } from "./processes/velo_stack_h5ad.nf"
 
 workflow {
@@ -15,6 +16,7 @@ workflow {
     t2g = file(params.kallisto.t2g, checkIfExists: true)
     intron_t2g = file(params.kallisto.intron_t2g, checkIfExists: true)
     cdna_t2g = file(params.kallisto.cdna_t2g, checkIfExists: true)
+    g2s = file(params.kallisto.g2s, checkIfExists: true)
     reads = Channel
         .fromFilePairs (params.data.reads, checkIfExists: true)
 
@@ -62,10 +64,17 @@ workflow {
         .map { it -> [ it[0].replace("_cdna", ""), it[1] ] }
     merged_ch = intron_h5ad_ch.join(cdna_h5ad_ch)
 
-    // Stack h5ads into a single h5ad
-    VeloStackH5AD(
+    // Stack both intronic and cDNA h5ads into single h5ads
+    velo_stack = VeloStackH5AD(
         merged_ch,
     )
+
+    // Merge all h5ads into a single h5ad
+    merged = Merge(
+        velo_stack.h5ad_ch.collect(),
+        g2s,
+    )
+
 }
 
 workflow CountCDNA {
