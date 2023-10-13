@@ -21,7 +21,17 @@ but useful and used in this README.
 
 - [ggetrs](https://noamteyssier.github.io/ggetrs/)
 - [splici](https://github.com/noamteyssier/splici)
+- [gtfjson](https://github.com/noamteyssier/gtfjson)
 - [samtools](https://github.com/samtools/samtools)
+
+### Installation
+
+Once you have `cargo` installed and a conda environment setup
+we can run the following batch install
+
+```bash
+cargo install ggetrs gtfjson scispeak splici
+```
 
 ## Configuration
 
@@ -74,6 +84,9 @@ splici introns \
 # We will then create the intron and cDNA t2g files.
 grep "S$" t2g.tsv > cdna.t2g.tsv
 grep "U$" t2g.tsv > introns.t2g.tsv
+
+# We'll then use gtfjson (`gj`) to build a gene to symbol map
+gj map -m g2s -i Mus_musculus.GRCm39.110.gtf.gz -o g2s.tsv;
 
 # Create the kallisto index using the splici sequences
 kallisto index -i index.idx splici.fasta.gz
