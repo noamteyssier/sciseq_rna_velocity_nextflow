@@ -115,3 +115,14 @@ then you can run the following:
 ```bash
 nextflow run -resume Processing.nf
 ```
+
+## Results
+
+All the results of the mapping will be in the `results/` directory that
+will be created.
+
+You can explore the `work/` directory to see intermediate steps and also
+the commands used to generate everything.
+
+All files in the `results` directory are symlinked from the `work` directory
+so be careful not to delete it by accident.
